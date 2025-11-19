@@ -6,11 +6,27 @@ import Catalog from './components/Catalog'
 import Trust from './components/Trust'
 import Testimonials from './components/Testimonials'
 import Cart from './components/Cart'
+import Spline from '@splinetool/react-spline'
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false)
   const [cart, setCart] = useState([])
   const [toast, setToast] = useState(null)
+  const [content, setContent] = useState(null)
+
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const base = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+        const res = await fetch(`${base}/api/content`)
+        const data = await res.json()
+        setContent(data)
+      } catch (e) {
+        setContent(null)
+      }
+    }
+    loadContent()
+  }, [])
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -63,21 +79,40 @@ function App() {
     return () => clearTimeout(t)
   }, [toast])
 
+  const heroProps = {
+    title: content?.hero_title,
+    subtitle: content?.hero_subtitle,
+    cta: content?.hero_cta_text,
+    secondaryCta: content?.hero_secondary_cta_text,
+    badges: content?.hero_badges,
+    heroImage: content?.hero_image,
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 relative">
       <div className="absolute inset-0 pointer-events-none opacity-30" style={{ backgroundImage: 'radial-gradient(600px_600px_at_10%_0%, rgba(16,185,129,0.25), transparent 40%), radial-gradient(600px_600px_at_90%_10%, rgba(34,197,94,0.2), transparent 40%)' }} />
 
       <Header onCartOpen={() => setCartOpen(true)} cartCount={cart.reduce((s, i) => s + i.quantity, 0)} />
 
+      {content?.spline_url && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8">
+          <div className="rounded-3xl overflow-hidden border border-emerald-700/40 bg-emerald-900/20">
+            <div className="aspect-[16/9]">
+              <Spline scene={content.spline_url} />
+            </div>
+          </div>
+        </div>
+      )}
+
       <Hero onShop={() => {
         const el = document.getElementById('shop');
         el?.scrollIntoView({ behavior: 'smooth' })
-      }} />
+      }} {...heroProps} />
 
       <Catalog onAdd={(p) => addToCart(p)} />
 
-      <Trust />
-      <Testimonials />
+      <Trust content={content} />
+      <Testimonials content={content} />
 
       <footer className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-emerald-100/80">
         <div className="rounded-3xl p-6 bg-emerald-900/30 border border-emerald-700/40">
