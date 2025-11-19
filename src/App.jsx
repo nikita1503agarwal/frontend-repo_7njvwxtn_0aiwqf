@@ -109,7 +109,7 @@ function App() {
         el?.scrollIntoView({ behavior: 'smooth' })
       }} {...heroProps} />
 
-      <Catalog onAdd={(p) => addToCart(p)} />
+      <Catalog onAdd={(p) => addToCart(p)} content={content} />
 
       <Trust content={content} />
       <Testimonials content={content} />

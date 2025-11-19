@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import ProductCard from './ProductCard'
 
-export default function Catalog({ onAdd }) {
+export default function Catalog({ onAdd, content }) {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -24,8 +24,8 @@ export default function Catalog({ onAdd }) {
   return (
     <section id="shop" className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
       <div className="flex items-end justify-between mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-white">Shop popular picks</h2>
-        <p className="text-emerald-100/70 text-sm">Nature-made • Lab-tested • Planet-kind</p>
+        <h2 className="text-2xl sm:text-3xl font-bold text-white">{content?.shop_title || 'Shop popular picks'}</h2>
+        <p className="text-emerald-100/70 text-sm">{content?.shop_subtitle || 'Nature-made • Lab-tested • Planet-kind'}</p>
       </div>
       {loading ? (
         <div className="text-emerald-100/80">Loading products…</div>
